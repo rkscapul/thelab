@@ -1,0 +1,110 @@
+# Temperature sensor
+sensor:
+  - platform: dht
+    pin: D4
+    temperature:
+      name: "Garden Temperature"
+    humidity:
+      name: "Garden Room Humidity"
+    update_interval: 300s
+
+# Water level monitor
+binary_sensor:
+  - platform: gpio
+    pin: D3
+    name: "Water level above threshold"
+    filters:
+      - delayed_on: 10ms
+      - delayed_off: 200ms
+      - invert:
+
+# Garden relay 
+sn74hc595:
+  - id: 'garden_relay'
+    data_pin: D5
+    clock_pin: D8
+    latch_pin: D7
+    oe_pin: D6
+
+switch:
+  # Garden relay
+  # [0][IN1] - Track light
+  # [1][IN2] - String light
+  # [2][IN3] - Light strip
+  # [3][IN4] - Free Slot
+  # [4][IN5] - Free Slot
+  # [5][IN6] - Pump 1 
+  # [6][IN7] - Pump 2
+  # [7][IN8] - Pump 3
+  - platform: gpio
+    id: "garden_relay_p0"
+    name: "garden_relay_p0"
+    pin:
+      sn74hc595: garden_relay
+      number: 0
+      inverted: true
+
+  - platform: gpio
+    id: "garden_relay_p1"
+    name: "garden_relay_p1"
+    pin:
+      sn74hc595: garden_relay
+      number: 1
+      inverted: true
+
+  - platform: gpio
+    id: "garden_relay_p2"
+    name: "garden_relay_p2"
+    pin:
+      sn74hc595: garden_relay
+      number: 2
+      inverted: true
+
+  - platform: gpio
+    id: "garden_relay_p3"
+    name: "garden_relay_p3"
+    pin:
+      sn74hc595: garden_relay
+      number: 3
+      inverted: true
+
+  - platform: gpio
+    id: "garden_relay_p4"
+    name: "garden_relay_p4"
+    pin:
+      sn74hc595: garden_relay
+      number: 4
+      inverted: true
+
+  - platform: gpio
+    id: "garden_relay_p5"
+    name: "garden_relay_p5"
+    pin:
+      sn74hc595: garden_relay
+      number: 5
+      inverted: true
+    on_turn_on:
+      - delay: 60s
+      - switch.turn_off: garden_relay_p5
+
+  - platform: gpio
+    id: "garden_relay_p6"
+    name: "garden_relay_p6"
+    pin:
+      sn74hc595: garden_relay
+      number: 6
+      inverted: true
+    on_turn_on:
+      - delay: 60s
+      - switch.turn_off: garden_relay_p6
+
+  - platform: gpio
+    id: "garden_relay_p7"
+    name: "garden_relay_p7"
+    pin:
+      sn74hc595: garden_relay
+      number: 7
+      inverted: true
+    on_turn_on:
+      - delay: 60s
+      - switch.turn_off: garden_relay_p7
