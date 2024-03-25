@@ -1,0 +1,74 @@
+# Paste these one line below `captive_portal:`
+
+esp32_ble_tracker:
+  scan_parameters:
+    interval: 1100ms
+    window: 1100ms
+    active: true
+
+bluetooth_proxy:
+  active: true
+
+dallas:
+  - pin: GPIO13
+
+# Water level monitor
+binary_sensor:
+  - platform: gpio
+    pin: GPIO25
+    name: "Water level normal"
+    id: waterLevelNormal
+    filters:
+      - delayed_on: 10ms
+      - delayed_off: 200ms
+  - platform: gpio
+    pin: GPIO26
+    name: "Water level low"
+    id: waterLevelLow
+    filters:
+      - delayed_on: 10ms
+      - delayed_off: 200ms
+  - platform: gpio
+    pin: GPIO27
+    name: "Water level critically low"
+    id: waterLevelCritical
+    filters:
+      - delayed_on: 10ms
+      - delayed_off: 200ms
+
+sensor:
+  - platform: dallas
+    address: # Check https://esphome.io/components/sensor/dallas.html to find out how to look for your sensors
+    name: "Surface Temperature"
+  - platform: dallas
+    address: # Check https://esphome.io/components/sensor/dallas.html to find out how to look for your sensors
+    name: "Deep Temperature"
+  
+text_sensor:
+  - platform: template
+    name: "Reservoir level"
+    update_interval: 1s
+    lambda: |-
+      if (bool(id(waterLevelCritical).state) == true && 
+          bool(id(waterLevelLow).state) == true &&
+          bool(id(waterLevelNormal).state) == true) {
+        return {"Critically low"};
+      }
+      else if (bool(id(waterLevelCritical).state) == false && 
+               bool(id(waterLevelLow).state) == true &&
+               bool(id(waterLevelNormal).state) == true) {
+        return {"Low"};
+      }
+      else if (bool(id(waterLevelCritical).state) == false && 
+               bool(id(waterLevelLow).state) == false &&
+               bool(id(waterLevelNormal).state) == true) {
+        return {"Normal"};
+      }
+      else if (bool(id(waterLevelCritical).state) == false && 
+               bool(id(waterLevelLow).state) == false &&
+               bool(id(waterLevelNormal).state) == false) {
+        return {"Full"};
+      }
+      else {
+        return {"???"};
+      }
