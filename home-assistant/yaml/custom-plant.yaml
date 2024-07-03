@@ -1,0 +1,63 @@
+# This custom component shows vital details of the plant described
+# Pre-requisites
+# 1. HACS
+#    - Expander card: https://github.com/MelleD/lovelace-expander-card
+#    - Card Mod: https://github.com/thomasloven/lovelace-card-mod
+#    - Lovelace Mushroom cards: https://github.com/piitaya/lovelace-mushroom
+# 
+# In this sample template, a MiFlora plant sensor is used for sensors.
+
+type: custom:expander-card
+expanded: false
+title: ''
+title-card-clickable: false
+title-card-button-overlay: false
+title-card:
+  type: custom:mushroom-template-card
+  primary: Sampaguita
+  entity: sensor.sampaguita_temperature
+  tap_action:
+    action: more-info
+  secondary: >-
+    Jasminum sambac // {{states('sensor.sampaguita_temperature',
+    with_unit=True)}}
+  icon: mdi:home
+  picture: >-
+    https://upload.wikimedia.org/wikipedia/commons/thumb/e/ec/Jasminum_sambac.jpg/140px-Jasminum_sambac.jpg
+  card_mod:
+    style: |
+      mushroom-template-card {
+        background-color: transparent;
+        box-shadow: none;
+      }
+
+      ha-card.type-custom-mushroom-template-card {
+        padding: 0px;
+        background-color: transparent;
+        box-shadow: none;
+      }
+cards:
+  - type: entities
+    entities:
+      - entity: sensor.sampaguita_temperature
+        name: Temperature
+      - entity: sensor.sampaguita_moisture
+        name: Moisture
+      - entity: sensor.sampaguita_illuminance
+        name: Illuminance
+      - entity: sensor.sampaguita_conductivity
+        name: Conductivity
+        secondary_info: none
+    footer:
+      type: graph
+      entity: sensor.sampaguita_temperature
+      detail: 2
+    card_mod:
+      style: |
+        ha-card {
+          --paper-item-icon-color: var(--grey-color);
+          --accent-color: var(--blue-color);
+          padding: 0;
+          background-color: transparent;
+          box-shadow: none;
+        }
